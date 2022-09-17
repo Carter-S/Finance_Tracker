@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.carter.financetracker.controllers.LoginController">
+   <children>
+      <Button id="loginButton" layoutX="728.0" layoutY="297.0" mnemonicParsing="false" onAction="#loginClick" prefHeight="50.0" prefWidth="88.0" stylesheets="@style.css" text="Login" AnchorPane.bottomAnchor="373.0" AnchorPane.leftAnchor="728.0" AnchorPane.rightAnchor="464.0" AnchorPane.topAnchor="297.0" />
+      <PasswordField fx:id="passwordInput" layoutX="399.0" layoutY="297.0" prefHeight="50.0" prefWidth="319.0" promptText="Enter password" styleClass="password" stylesheets="@style.css" AnchorPane.bottomAnchor="373.0" AnchorPane.leftAnchor="399.0" AnchorPane.rightAnchor="562.0" AnchorPane.topAnchor="297.0" />
+      <Label fx:id="errorText" layoutX="399.0" layoutY="360.0" prefHeight="69.0" prefWidth="420.0" styleClass="errorText" stylesheets="@style.css" AnchorPane.bottomAnchor="291.0" AnchorPane.leftAnchor="399.0" AnchorPane.rightAnchor="461.0" AnchorPane.topAnchor="360.0" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,56 @@
+.background{
+    -fx-background-color: #0F3460;
+}
+
+.label{
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-family: Consolas;
+    -fx-text-alignment: center;
+}
+
+#loginButton{
+    -fx-background-color: #E94560;
+    -fx-font-size: 18px;
+    -fx-font-family: Consolas;
+}
+
+.errorText{
+    -fx-font-family: Consolas;
+    -fx-text-fill: red;
+    -fx-font-size: 18px;
+}
+
+.password{
+    -fx-font-size: 15px;
+    -fx-font-family: Consolas;
+}
+
+#plusButton{
+    -fx-background-color: Green;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-family: Consolas;
+}
+
+#minusButton{
+    -fx-background-color: Red;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-family: Consolas;
+}
+
+#dropDown{
+    -fx-font-family: Consolas;
+    -fx-font-size: 16px;
+}
+
+#dropDown .label{
+    -fx-text-fill: black;
+}
+
+#inputBox{
+    -fx-font-family: Consolas;
+    -fx-font-size: 16px;
+    -fx-text-fill: black;
+}
