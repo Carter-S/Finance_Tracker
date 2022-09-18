@@ -124,6 +124,7 @@ public class HomeController implements Initializable {
         }
         rs.close();
         transactionTable.setItems(transactionsList);
+        numberBar.clear();
     };
 
 }
