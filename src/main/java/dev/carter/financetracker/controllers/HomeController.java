@@ -1,5 +1,6 @@
 package dev.carter.financetracker.controllers;
 
+import dev.carter.financetracker.Crypto;
 import dev.carter.financetracker.Transaction;
 import dev.carter.financetracker.MainApplication;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -23,9 +25,25 @@ public class HomeController implements Initializable {
     private ResultSet rs;
 
     private ObservableList<Transaction> transactionsList = FXCollections.observableArrayList();
+    private ObservableList<Crypto> cryptoList = FXCollections.observableArrayList();
 
     @FXML
     private ChoiceBox<String> categorySelection;
+
+    @FXML
+    private TableView<Crypto> cryptoTable;
+
+    @FXML
+    private TableColumn<Crypto, String> cryptoId;
+
+    @FXML
+    private TableColumn<Crypto, Float> cryptoAmount;
+
+    @FXML
+    private TableColumn<Crypto, Float> cryptoPrice;
+
+    @FXML
+    private TableColumn<Crypto, Double> cryptoTotal;
 
     @FXML
     private TableView<Transaction> transactionTable;
@@ -41,6 +59,12 @@ public class HomeController implements Initializable {
 
     @FXML
     private TableColumn<Transaction, Date> date;
+
+    @FXML
+    private Label overallLabel;
+
+    @FXML
+    private Label cryptoLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -59,6 +83,13 @@ public class HomeController implements Initializable {
             populateTransactions();
             //populate categories
             populateCategories();
+            //populate cryptos
+            populateCryptos();
+            double cryptoT= calculateCryptoTotal();
+            cryptoLabel.setText(String.valueOf(cryptoT));
+            double ov = cryptoT + balance;
+            DecimalFormat df = new DecimalFormat("0.00");
+            overallLabel.setText(String.valueOf(df.format(ov)));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -79,6 +110,31 @@ public class HomeController implements Initializable {
         category.setCellValueFactory(new PropertyValueFactory<Transaction, String>("category"));
         date.setCellValueFactory(new PropertyValueFactory<Transaction, Date>("date"));
         transactionTable.setItems(transactionsList);
+    }
+
+    private void populateCryptos() throws SQLException {
+        rs = stmt.executeQuery("SELECT * from crypto");
+        while(rs.next()){
+            cryptoList.add(new Crypto(rs.getString(1), rs.getFloat(2), rs.getFloat(3), rs.getDouble(4)));
+        }
+        rs.close();
+        if(cryptoList.isEmpty()){
+            sql = "ALTER TABLE crypto AUTO_INCREMENT = 1";
+            stmt.executeUpdate(sql);
+        }
+        cryptoId.setCellValueFactory(new PropertyValueFactory<Crypto, String>("cryptoId"));
+        cryptoAmount.setCellValueFactory(new PropertyValueFactory<Crypto, Float>("cryptoAmount"));
+        cryptoPrice.setCellValueFactory(new PropertyValueFactory<Crypto, Float>("cryptoPrice"));
+        cryptoTotal.setCellValueFactory(new PropertyValueFactory<Crypto, Double>("cryptoTotal"));
+        cryptoTable.setItems(cryptoList);
+    }
+
+    private double calculateCryptoTotal(){
+        double total = 0;
+        for(Crypto c: cryptoList){
+            total += c.getCryptoTotal();
+        }
+        return total;
     }
 
     private void populateCategories(){
