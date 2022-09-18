@@ -82,7 +82,7 @@ public class HomeController implements Initializable {
     }
 
     private void populateCategories(){
-        String[] categories = {"Food & Drink", "Entertainment", "Equipment", "Transport", "Investment", "Rent"};
+        String[] categories = {"Food & Drink", "Entertainment", "Equipment", "Transport", "Investment", "Rent", "Income", "Student finance"};
         categorySelection.getItems().addAll(categories);
         categorySelection.setValue(categories[0]);
     }
