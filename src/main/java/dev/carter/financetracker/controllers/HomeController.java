@@ -85,7 +85,6 @@ public class HomeController implements Initializable {
         String[] categories = {"Food & Drink", "Entertainment", "Equipment", "Transport", "Investment", "Rent"};
         categorySelection.getItems().addAll(categories);
         categorySelection.setValue(categories[0]);
-
     }
     @FXML
     private Label balanceLabel;
