@@ -1,7 +1,6 @@
 package dev.carter.financetracker.controllers;
 
-import com.mysql.cj.xdevapi.Table;
-import dev.carter.financetracker.Expense;
+import dev.carter.financetracker.Transaction;
 import dev.carter.financetracker.MainApplication;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -24,25 +22,25 @@ public class HomeController implements Initializable {
     private String sql;
     private ResultSet rs;
 
-    private ObservableList<Expense> expensesList = FXCollections.observableArrayList();
+    private ObservableList<Transaction> transactionsList = FXCollections.observableArrayList();
 
     @FXML
     private ChoiceBox<String> categorySelection;
 
     @FXML
-    private TableView<Expense> expenseTable;
+    private TableView<Transaction> transactionTable;
 
     @FXML
-    private TableColumn<Expense, Integer> expId;
+    private TableColumn<Transaction, Integer> tranId;
 
     @FXML
-    private TableColumn<Expense, Double> expAm;
+    private TableColumn<Transaction, Double> tranAm;
 
     @FXML
-    private TableColumn<Expense, String> category;
+    private TableColumn<Transaction, String> category;
 
     @FXML
-    private TableColumn<Expense, Date> date;
+    private TableColumn<Transaction, Date> date;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -58,7 +56,7 @@ public class HomeController implements Initializable {
             rs.close();
             balanceLabel.setText(String.valueOf(balance));
             //populate table
-            populateExpenses();
+            populateTransactions();
             //populate categories
             populateCategories();
         } catch (SQLException e) {
@@ -66,21 +64,21 @@ public class HomeController implements Initializable {
         }
     }
 
-    private void populateExpenses() throws SQLException {
-        rs = stmt.executeQuery("SELECT * from expenses");
+    private void populateTransactions() throws SQLException {
+        rs = stmt.executeQuery("SELECT * from transactions");
         while(rs.next()){
-            expensesList.add(new Expense(rs.getInt(1), rs.getDouble(2), rs.getString(3), rs.getDate(4)));
+            transactionsList.add(new Transaction(rs.getInt(1), rs.getDouble(2), rs.getString(3), rs.getDate(4)));
         }
         rs.close();
-        if(expensesList.isEmpty()){
-            sql = "ALTER TABLE expenses AUTO_INCREMENT = 1";
+        if(transactionsList.isEmpty()){
+            sql = "ALTER TABLE transactions AUTO_INCREMENT = 1";
             stmt.executeUpdate(sql);
         }
-        expId.setCellValueFactory(new PropertyValueFactory<Expense, Integer>("ExpenseId"));
-        expAm.setCellValueFactory(new PropertyValueFactory<Expense, Double>("ExpenseAmount"));
-        category.setCellValueFactory(new PropertyValueFactory<Expense, String>("category"));
-        date.setCellValueFactory(new PropertyValueFactory<Expense, Date>("date"));
-        expenseTable.setItems(expensesList);
+        tranId.setCellValueFactory(new PropertyValueFactory<Transaction, Integer>("transactionId"));
+        tranAm.setCellValueFactory(new PropertyValueFactory<Transaction, Double>("transactionAmount"));
+        category.setCellValueFactory(new PropertyValueFactory<Transaction, String>("category"));
+        date.setCellValueFactory(new PropertyValueFactory<Transaction, Date>("date"));
+        transactionTable.setItems(transactionsList);
     }
 
     private void populateCategories(){
@@ -103,16 +101,6 @@ public class HomeController implements Initializable {
     @FXML
     private void minusClick(ActionEvent actionEvent) throws IOException, SQLException {
         adjustBalance(0);
-        sql = "SELECT * FROM expenses ORDER BY expenseId DESC LIMIT 1";
-        rs = stmt.executeQuery(sql);
-        if(rs.next()){
-            expensesList.add(new Expense(rs.getInt("expenseId"), rs.getDouble("expenseAmount"), rs.getString("category"), rs.getDate(4)));
-        }
-        expId.setCellValueFactory(new PropertyValueFactory<Expense, Integer>("ExpenseId"));
-        expAm.setCellValueFactory(new PropertyValueFactory<Expense, Double>("ExpenseAmount"));
-        category.setCellValueFactory(new PropertyValueFactory<Expense, String>("category"));
-        date.setCellValueFactory(new PropertyValueFactory<Expense, Date>("date"));
-        expenseTable.setItems(expensesList);
     }
 
     private void adjustBalance(int addsub) throws SQLException {
@@ -124,11 +112,19 @@ public class HomeController implements Initializable {
              updated_balance = String.valueOf(balance + amount);
         }else{
              updated_balance = String.valueOf(balance - amount);
-             java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
-             sql = "INSERT INTO expenses (expenseAmount, category, date) VALUES (" + amount + ", \'" + cat +"\', \'"+ date +"')";
-             stmt.executeUpdate(sql);
+             amount = 0 - amount;
         }
+        java.sql.Date date = new java.sql.Date(System.currentTimeMillis());
+        sql = "INSERT INTO transactions (transactionAmount, category, date) VALUES (" + amount + ", \'" + cat +"\', \'"+ date +"')";
+        stmt.executeUpdate(sql);
         balanceLabel.setText(updated_balance);
+        sql = "SELECT * FROM transactions ORDER BY transactionId DESC LIMIT 1";
+        rs = stmt.executeQuery(sql);
+        if(rs.next()){
+            transactionsList.add(new Transaction(rs.getInt(1), rs.getDouble(2), rs.getString(3), rs.getDate(4)));
+        }
+        rs.close();
+        transactionTable.setItems(transactionsList);
     };
 
 }
